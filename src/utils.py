@@ -2,7 +2,7 @@ import pandas as pd
 
 
 def request_to_pd (r: None):
-	# This function takes a request and turns the resulting data into a .csv file
+	# This function takes a request and turns the resulting data into a pandas df
 
 	# Gather data from request
 	dat = r.json()['data']
