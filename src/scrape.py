@@ -7,6 +7,7 @@ from selenium.webdriver import Chrome
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.common.by import By
+from bs4 import BeautifulSoup
 
 
 def setup_driver(url: str):
@@ -42,23 +43,18 @@ def wait_to_click(driver: None,
 
 def wait_to_read(driver: None,
                  button_xpath: str,
-                 table_xpath: str,
                  delay: int = 20):
     """
     Selenium webdriver action that uses a clickable element to gauge whether a table can be read.
 
     :param driver: selenium webdriver
     :param button_xpath: clickable element address (e.g., the 'View Report' button)
-    :param table_xpath: html address for the table (must be FULL path)
     :param delay: time to wait for clickable item AND table address
     :return: selenium web-element
     """
     # First wait until the report is fully loaded and button is once again clickable
-    WebDriverWait(driver, delay).until(EC.element_to_be_clickable(
+    query = WebDriverWait(driver, delay).until(EC.element_to_be_clickable(
         (By.XPATH, button_xpath)))  # Don't click just wait
-    # Then save the table object
-    query = WebDriverWait(driver, delay).until(EC.presence_of_element_located(
-        (By.XPATH, table_xpath)))  # read table or element
     return query
 
 
@@ -78,6 +74,30 @@ def write_html_to_csv(table: None, filename: str):
             linecounter += 1
             if linecounter % 25 == 0:
                 print(str(linecounter) + " lines written to " + filename)
+
+
+def write_html_to_csv_bs(driver: None,
+                         table_index: int,
+                         filename: str
+                         ):
+    """
+
+    :param driver:
+    :param table_index:
+    :param filename:
+    :return:
+    """
+    page_source = driver.page_source
+    soup = BeautifulSoup(page_source, 'lxml')
+    table = soup.find_all('table')[table_index]
+
+    with open(filename, 'w') as csvfile:
+        wr = csv.writer(csvfile)
+        rows = table.find_all('tr')
+        for row in rows:
+            row_list = row.find_all('td')
+            row_list = [cell.text.strip() for cell in row_list]
+            wr.writerow(row_list)
 
 
 def build_traffic_data(driver: None,
@@ -139,14 +159,13 @@ def build_traffic_data(driver: None,
             wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl00"]')  # Report
 
             if scan_table:
-                # Need the FULL xpath for the table
-                table = wait_to_read(driver,
-                                     button_xpath='//*[@id="ReportViewer_ctl04_ctl00"]',
-                                     table_xpath='/html/body/form/div[3]/span/div/table/tbody/tr[5]/td[3]/div/div[1]/div/table/tbody/tr/td/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr[4]/td[1]/table'
+                # Wait until table is visible then iterate through using Beautiful Soup
+                wait_to_read(driver, button_xpath='//*[@id="ReportViewer_ctl04_ctl00"]')
+                write_html_to_csv_bs(driver=driver,
+                                     table_index=34,
+                                     filename=("data/traffic_counts_" + str(year) + ".csv")
                                      )
-                # Iterate through table items
-                write_html_to_csv(table=table,
-                                  filename=("data/traffic_counts_" + str(year) + ".csv"))
+
             if download_link:
                 # Save dropdown
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl05_ctl04_ctl00_ButtonImg"]')  # Open save dropdown
@@ -182,43 +201,43 @@ def build_visit_data(driver: None,
         2018: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl02"]',
         2017: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl03"]',
         2016: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl04"]',
-        2015: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl05"]',
-        2014: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl06"]',
-        2013: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl07"]',
-        2012: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl08"]',
-        2011: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl09"]',
-        2010: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl10"]',
-        2009: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl11"]',
-        2008: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl12"]',
-        2007: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl13"]',
-        2006: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl14"]',
-        2005: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl15"]',
-        2004: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl16"]',
-        2003: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl17"]',
-        2002: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl18"]',
-        2001: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl19"]',
-        2000: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl20"]',
-        1999: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl21"]',
-        1998: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl22"]',
-        1997: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl23"]',
-        1996: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl24"]',
-        1995: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl25"]',
-        1994: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl26"]',
-        1993: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl27"]',
-        1992: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl28"]',
-        1991: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl29"]',
-        1990: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl30"]',
-        1989: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl31"]',
-        1988: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl32"]',
-        1987: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl33"]',
-        1986: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl34"]',
-        1985: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl35"]',
-        1984: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl36"]',
-        1983: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl37"]',
-        1982: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl38"]',
-        1981: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl39"]',
-        1980: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl40"]',
-        1979: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl41"]'
+        2015: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl05"]'
+        # 2014: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl06"]',
+        # 2013: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl07"]',
+        # 2012: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl08"]',
+        # 2011: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl09"]',
+        # 2010: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl10"]',
+        # 2009: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl11"]',
+        # 2008: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl12"]',
+        # 2007: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl13"]',
+        # 2006: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl14"]',
+        # 2005: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl15"]',
+        # 2004: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl16"]',
+        # 2003: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl17"]',
+        # 2002: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl18"]',
+        # 2001: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl19"]',
+        # 2000: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl20"]',
+        # 1999: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl21"]',
+        # 1998: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl22"]',
+        # 1997: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl23"]',
+        # 1996: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl24"]',
+        # 1995: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl25"]',
+        # 1994: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl26"]',
+        # 1993: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl27"]',
+        # 1992: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl28"]',
+        # 1991: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl29"]',
+        # 1990: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl30"]',
+        # 1989: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl31"]',
+        # 1988: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl32"]',
+        # 1987: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl33"]',
+        # 1986: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl34"]',
+        # 1985: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl35"]',
+        # 1984: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl36"]',
+        # 1983: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl37"]',
+        # 1982: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl38"]',
+        # 1981: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl39"]',
+        # 1980: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl40"]',
+        # 1979: '//*[@id="ReportViewer_ctl04_ctl03_divDropDown_ctl41"]'
     }
 
     try:
@@ -265,14 +284,12 @@ def build_visit_data(driver: None,
             wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl00"]')  # Report
 
             if scan_table:
-                # Need the FULL xpath for the table
-                table = wait_to_read(driver,
-                                     button_xpath='//*[@id="ReportViewer_ctl04_ctl00"]',
-                                     table_xpath='/html/body/form/div[3]/span/div/table/tbody/tr[5]/td[3]/div/div[1]/div/table/tbody/tr/td/table/tbody/tr[1]/td/table/tbody/tr/td/table/tbody/tr[4]/td/table'
+                # Wait until table is visible then iterate through using Beautiful Soup
+                wait_to_read(driver, button_xpath='//*[@id="ReportViewer_ctl04_ctl00"]')
+                write_html_to_csv_bs(driver=driver,
+                                     table_index=34,
+                                     filename=("data/visits_" + str(year) + ".csv")
                                      )
-                # Iterate through table items
-                write_html_to_csv(table=table,
-                                  filename=("data/visits_" + str(year) + ".csv"))
 
             if download_link:
                 # Save dropdown
