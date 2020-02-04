@@ -117,9 +117,15 @@ def build_traffic_data(driver: None,
                 # Regions drop down
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl07_ddDropDownButton"]')  # Open dropdown
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl07_divDropDown_ctl00"]')  # Select all
-                wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl07_divDropDown_ctl00"]')  # deselect all
-                wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl07_divDropDown_ctl02"]')  # Select AK
+                # wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl07_divDropDown_ctl00"]')  # deselect all
+                # wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl07_divDropDown_ctl02"]')  # Select AK
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl07_ddDropDownButton"]')  # Close dropdown
+                # National parks/monuments only
+                wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_ddDropDownButton"]')  # Open dropdown
+                wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_divDropDown_ctl00"]')  # Deselect all
+                wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_divDropDown_ctl11"]')  # Select national monuments
+                wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_divDropDown_ctl12"]')  # Select national parks
+                wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_ddDropDownButton"]')  # Close dropdown
                 # Parks drop down - this MUST come after Regions dropdown
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl11_ddDropDownButton"]')  # Open dropdown
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl11_divDropDown_ctl00"]')  # Select all
@@ -194,9 +200,15 @@ def build_visit_data(driver: None,
                 # Regions dropdown
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl07_ddDropDownButton"]')  # Open dropdown
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl07_divDropDown_ctl00"]')  # Select all
-                wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl07_divDropDown_ctl00"]')  # Deselect all
-                wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl07_divDropDown_ctl02"]')  # Select AK
+                # wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl07_divDropDown_ctl00"]')  # Deselect all
+                # wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl07_divDropDown_ctl02"]')  # Select AK
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl07_ddDropDownButton"]')  # Close dropdown
+                # National parks/monuments only
+                wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_ddDropDownButton"]')  # Open dropdown
+                wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_divDropDown_ctl00"]')  # Deselect all
+                wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_divDropDown_ctl11"]')  # Select national monuments
+                wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_divDropDown_ctl12"]')  # Select national parks
+                wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_ddDropDownButton"]')  # Close dropdown
                 # Parks dropdown - this MUST come after Regions dropdown
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl11_ddDropDownButton"]')  # Open dropdown
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl11_divDropDown_ctl00"]')  # Select all
