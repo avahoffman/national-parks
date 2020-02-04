@@ -58,34 +58,17 @@ def wait_to_read(driver: None,
     return query
 
 
-def write_html_to_csv(table: None, filename: str):
-    """
-    Function iterates through lines of a selenium web-element and writes to a csv
-
-    :param table: selenium web-element
-    :param filename: filename into which to write lines of 'table'
-    :return: outputs to csv and also writes progress into the console
-    """
-    with open(filename, 'w', newline='') as csvfile:
-        wr = csv.writer(csvfile)
-        linecounter = 0
-        for row in table.find_elements_by_css_selector('tr'):
-            wr.writerow([d.text for d in row.find_elements_by_css_selector('td')])
-            linecounter += 1
-            if linecounter % 25 == 0:
-                print(str(linecounter) + " lines written to " + filename)
-
-
 def write_html_to_csv_bs(driver: None,
                          table_index: int,
                          filename: str
                          ):
     """
+    Function iterates through lines of a specified table and writes to a csv
 
-    :param driver:
-    :param table_index:
-    :param filename:
-    :return:
+    :param driver: selenium webdriver
+    :param table_index: index of interest out of all of the page source's tables
+    :param filename: filename into which to write lines of the indicated table
+    :return: outputs to csv
     """
     page_source = driver.page_source
     soup = BeautifulSoup(page_source, 'lxml')
@@ -143,7 +126,8 @@ def build_traffic_data(driver: None,
                 # National parks/monuments only
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_ddDropDownButton"]')  # Open dropdown
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_divDropDown_ctl00"]')  # Deselect all
-                wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_divDropDown_ctl11"]')  # Select national monuments
+                wait_to_click(driver,
+                              '//*[@id="ReportViewer_ctl04_ctl09_divDropDown_ctl11"]')  # Select national monuments
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_divDropDown_ctl12"]')  # Select national parks
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_ddDropDownButton"]')  # Close dropdown
                 # Parks drop down - this MUST come after Regions dropdown
@@ -264,7 +248,8 @@ def build_visit_data(driver: None,
                 # National parks/monuments only
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_ddDropDownButton"]')  # Open dropdown
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_divDropDown_ctl00"]')  # Deselect all
-                wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_divDropDown_ctl11"]')  # Select national monuments
+                wait_to_click(driver,
+                              '//*[@id="ReportViewer_ctl04_ctl09_divDropDown_ctl11"]')  # Select national monuments
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_divDropDown_ctl12"]')  # Select national parks
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl09_ddDropDownButton"]')  # Close dropdown
                 # Parks dropdown - this MUST come after Regions dropdown
@@ -273,7 +258,8 @@ def build_visit_data(driver: None,
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl11_ddDropDownButton"]')  # Close dropdown
                 # Other fields dropdown
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl15_ddDropDownButton"]')  # Open dropdown
-                wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl15_divDropDown_ctl00"]')  # Select all add'l fields
+                wait_to_click(driver,
+                              '//*[@id="ReportViewer_ctl04_ctl15_divDropDown_ctl00"]')  # Select all add'l fields
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl15_ddDropDownButton"]')  # Close dropdown
                 # Types of visits
                 wait_to_click(driver, '//*[@id="ReportViewer_ctl04_ctl13_ddDropDownButton"]')  # Open dropdown
