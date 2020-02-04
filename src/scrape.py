@@ -309,10 +309,10 @@ def build_visit_data(driver: None,
 
 
 def run_data_scrapers():
-    # driver = setup_driver(
-    #     url="https://irma.nps.gov/STATS/SSRSReports/National%20Reports/Query%20Builder%20for%20Traffic%20Counts%20(1985%20-%20Last%20Calendar%20Year)"
-    # )
-    # build_traffic_data(driver, scan_table=True)
+    driver = setup_driver(
+        url="https://irma.nps.gov/STATS/SSRSReports/National%20Reports/Query%20Builder%20for%20Traffic%20Counts%20(1985%20-%20Last%20Calendar%20Year)"
+    )
+    build_traffic_data(driver, scan_table=True)
 
     driver = setup_driver(
         url="https://irma.nps.gov/STATS/SSRSReports/National%20Reports/Query%20Builder%20for%20Public%20Use%20Statistics%20(1979%20-%20Last%20Calendar%20Year)"
