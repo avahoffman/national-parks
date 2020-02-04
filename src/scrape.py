@@ -64,10 +64,12 @@ def build_traffic_data(driver: None):
 
             counter += 1
 
+        print("All queries successful")
         driver.quit()
 
     except:
 
+        print("Queries interrupted")
         driver.quit()
 
 
@@ -124,10 +126,12 @@ def build_visit_data(driver: None):
 
             counter += 1
 
+        print("All queries successful")
         driver.quit()
 
     except:
 
+        print("Queries interrupted")
         driver.quit()
 
 
